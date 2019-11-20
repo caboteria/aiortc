@@ -9,7 +9,7 @@ import ssl
 from aiohttp import web
 
 from aiortc import RTCPeerConnection, RTCSessionDescription
-from persistentplayer import MediaPlayer
+from persistentplayer import WebcamSource
 
 ROOT = os.path.dirname(__file__)
 logger = logging.getLogger("webcam")
@@ -41,8 +41,8 @@ async def offer(request):
 
     await pc.setRemoteDescription(offer)
     for t in pc.getTransceivers():
-        if t.kind == "video" and player.video:
-            pc.addTrack(player.video)
+        if t.kind == "video":
+            player.addPC(pc, "video")
 
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     # open media source
     options = {"framerate": "10", "video_size": "640x480"}
-    player = MediaPlayer("/dev/video0", format="v4l2", options=options)
+    player = WebcamSource("/dev/video0", format="v4l2", options=options)
 
     app = web.Application()
     app.on_shutdown.append(on_shutdown)
