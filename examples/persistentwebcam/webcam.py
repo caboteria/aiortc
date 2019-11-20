@@ -3,7 +3,6 @@ import asyncio
 import json
 import logging
 import os
-import platform
 import ssl
 
 from aiohttp import web

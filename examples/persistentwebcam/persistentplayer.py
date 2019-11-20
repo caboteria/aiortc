@@ -1,8 +1,6 @@
 import asyncio
-import fractions
 import logging
 import threading
-import time
 
 import av
 from av import VideoFrame
@@ -14,9 +12,6 @@ logger = logging.getLogger("media")
 
 def worker(loop, container, streams, video_tracks, quit_event):
     video_first_pts = None
-
-    frame_time = None
-    start_time = time.time()
 
     while not quit_event.is_set():
         try:
@@ -36,7 +31,6 @@ def worker(loop, container, streams, video_tracks, quit_event):
                 video_first_pts = frame.pts
             frame.pts -= video_first_pts
 
-            frame_time = frame.time
             for track in video_tracks:
                 asyncio.run_coroutine_threadsafe(track._queue.put(frame), loop)
 
